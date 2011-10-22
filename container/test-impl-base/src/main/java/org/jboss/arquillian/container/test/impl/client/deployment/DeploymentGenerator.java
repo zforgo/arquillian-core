@@ -99,6 +99,7 @@ public class DeploymentGenerator
          Container container = conReg.getContainer(target);
          if(container == null)
          {
+            throwTargetNotFoundValidationException(conReg, target);
             throw new ValidationException(
                   DeploymentScenario.class.getSimpleName() + " contains targets not matching any defined Container in the registry. " + target.getName() + 
                   ". Possible causes are: No Deployable Container found on Classpath or " + 
@@ -219,5 +220,27 @@ public class DeploymentGenerator
             processor.process(auxiliaryArchive);
          }
       }
+   }
+
+   private void throwTargetNotFoundValidationException(ContainerRegistry conReg, TargetDescription target)
+   {
+      if(conReg.getContainers().size() == 0)
+      {
+         throwNoContainerFound(target);
+      }
+      throwNoMatchFound(conReg, target);
+   }
+
+   private void throwNoContainerFound(TargetDescription target)
+   {
+      throw new ValidationException("DeploymentScenario contains a target (" + target.getName() + ") not matching any defined Container in the registry.\n" + 
+            "Please include at least 1 Deployable Container in on your Classpath.");
+   }
+
+   private void throwNoMatchFound(ContainerRegistry conReg, TargetDescription target)
+   {
+      throw new ValidationException("DeploymentScenario contains a target (_DEFAULT_) not matching any defined Container in the registry.\n" + 
+            "Possible causes are: None of the " + conReg.getContainers().size() + " Deployable Containers on your Classpath match or you have defined a " +
+            "@org.jboss.arquillian.container.test.api.Deployment with a @org.jboss.arquillian.container.test.api.TargetsContainer of value (_DEFAULT_) that does not match any found/configured Containers (jboss-embedded, jetty-embedded), see arquillian.xml container@qualifier");
    }
 }

@@ -30,7 +30,6 @@ import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -160,7 +159,7 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       }
    }
 
-   @Test
+   @Test(expected = IllegalStateException.class)
    public void shouldThrowExceptionIfMultipleContainersSetAsDefault()
    {
       try
@@ -175,10 +174,11 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       catch (IllegalStateException e)
       {
          Assert.assertTrue(e.getMessage().startsWith("Multiple Containers defined as default"));
+         throw e;
       }
    }
 
-   @Test
+   @Test(expected = IllegalStateException.class)
    public void shouldThrowExceptionIfMultipleGroupsSetAsDefault()
    {
       try
@@ -193,10 +193,11 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       catch (IllegalStateException e)
       {
          Assert.assertTrue(e.getMessage().startsWith("Multiple Groups defined as default"));
+         throw e;
       }
    }
 
-   @Test
+   @Test(expected = IllegalStateException.class)
    public void shouldThrowExceptionIfMultipleGroupsOrContainersSetAsDefault()
    {
       try
@@ -211,10 +212,11 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       catch (IllegalStateException e)
       {
          Assert.assertTrue(e.getMessage().startsWith("Multiple Containers/Groups defined as default"));
+         throw e;
       }
    }
 
-   @Test
+   @Test(expected = IllegalStateException.class)
    public void shouldThrowExceptionIfMultipleContainersInGroupSetAsDefault()
    {
       try
@@ -229,6 +231,26 @@ public class ContainerRegistryCreatorTestCase extends AbstractContainerTestBase
       catch (IllegalStateException e)
       {
          Assert.assertTrue(e.getMessage().startsWith("Multiple Containers within Group defined as default"));
+         throw e;
+      }
+   }
+
+   /*
+    *  ARQ-619, multiple DeployableContainer on classpath is not currently allowed, but not reported.
+    */
+   @Test(expected = IllegalStateException.class)
+   public void shouldThrowExceptionIfMultipleDeployableContainersFoundOnClassapth()
+   {
+      Mockito.when(serviceLoader.onlyOne(DeployableContainer.class)).thenThrow(new IllegalStateException("Multiple service implementations found for ..."));
+
+      try
+      {
+         fire( Descriptors.create(ArquillianDescriptor.class));
+      }
+      catch (IllegalStateException e)
+      {
+         Assert.assertTrue(e.getMessage().startsWith("Could not add a default container"));
+         throw e;
       }
    }
 

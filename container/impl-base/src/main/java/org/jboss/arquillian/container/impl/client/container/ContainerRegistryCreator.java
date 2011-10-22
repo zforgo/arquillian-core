@@ -85,17 +85,21 @@ public class ContainerRegistryCreator
       }
       if(activeConfiguration == null && reg.getContainers().size() == 0)
       {
+         DeployableContainer<?> deployableContainer = null;
          try
          {
-            DeployableContainer<?> deployableContainer = serviceLoader.onlyOne(DeployableContainer.class);
-            if(deployableContainer != null)
-            {
-               reg.create(new ContainerDefImpl("arquillian.xml").setContainerName("default"), serviceLoader);
-            }
+            // 'check' if there are any DeployableContainers on CP
+            deployableContainer = serviceLoader.onlyOne(DeployableContainer.class);
          } 
          catch (Exception e) 
          {
-            // ignore
+            throw new IllegalStateException(
+                  "Could not add a default container to registry, multipe " +
+                        DeployableContainer.class.getName() + " found on classpath", e);
+         }
+         if(deployableContainer != null)
+         {
+            reg.create(new ContainerDefImpl("arquillian.xml").setContainerName("default"), serviceLoader);
          }
       }
 
