@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>org.jboss.arquillian</groupId>
+    <artifactId>arquillian-parent</artifactId>
+    <version>1.4.1.Final</version>
+  </parent>
+
+  <!-- Model Information -->
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Artifact Information -->
+  <groupId>org.jboss.arquillian.junit5</groupId>
+  <artifactId>arquillian-junit5-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Arquillian TestRunner JUnit 5 Aggregator</name>
+  <description>Arquillian JUnit 5 Aggregator</description>
+
+  <properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+  </properties>
+
+  <modules>
+    <module>core</module>
+    <module>container</module>
+    <module>standalone</module>
+  </modules>
+</project>

@@ -37,6 +37,8 @@ import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.api.threading.ContextSnapshot;
 import org.jboss.arquillian.core.api.threading.ExecutorService;
+import org.jboss.arquillian.test.spi.NoMethodExecutor;
+import org.jboss.arquillian.test.spi.TestMethodExecutor;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.annotation.TestScoped;
 
@@ -100,7 +102,12 @@ public class RemoteTestExecuter {
             protocolConfiguration = protocol.createProtocolConfiguration();
         }
         ContainerMethodExecutor executor = getContainerMethodExecutor(protocol, protocolConfiguration);
-        testResult.set(executor.invoke(event.getExecutor()));
+        TestMethodExecutor testMethodExecutor = event.getExecutor();
+        TestResult testResult = executor.invoke(testMethodExecutor);
+        if (testMethodExecutor instanceof NoMethodExecutor.NoMethodExecutorWithTestResults){
+            ((NoMethodExecutor.NoMethodExecutorWithTestResults) testMethodExecutor).setTestResult(testResult);
+        }
+        this.testResult.set(testResult);
     }
 
     // TODO: cast to raw type to get away from generic issue..

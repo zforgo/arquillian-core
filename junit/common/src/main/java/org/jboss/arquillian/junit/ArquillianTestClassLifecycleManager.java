@@ -2,7 +2,7 @@ package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 
-abstract class ArquillianTestClassLifecycleManager extends AdaptorManager {
+public abstract class ArquillianTestClassLifecycleManager extends AdaptorManager {
 
     protected void handleSuiteLevelFailure(Throwable initializationException) {
         throw new RuntimeException(
@@ -19,7 +19,11 @@ abstract class ArquillianTestClassLifecycleManager extends AdaptorManager {
     }
 
 
-    void beforeTestClassPhase(Class<?> testClass) throws Exception {
+    public void beforeTestClassPhase(Class<?> testClass) throws Exception {
+        beforeTestClassPhase(testClass, LifecycleMethodExecutor.NO_OP);
+    }
+
+    public void beforeTestClassPhase(Class<?> testClass, LifecycleMethodExecutor methodExecutor) throws Exception {
         State.runnerStarted();
         initializeAdaptor();
 
@@ -28,10 +32,10 @@ abstract class ArquillianTestClassLifecycleManager extends AdaptorManager {
             setAdaptor(State.getTestAdaptor());
         }
 
-        getAdaptor().beforeClass(testClass, LifecycleMethodExecutor.NO_OP);
+        getAdaptor().beforeClass(testClass, methodExecutor);
     }
 
-    void afterTestClassPhase(Class<?> testClass) throws Exception {
+    public void afterTestClassPhase(Class<?> testClass) throws Exception {
         getAdaptor().afterClass(testClass, LifecycleMethodExecutor.NO_OP);
         shutdown(getAdaptor());
     }

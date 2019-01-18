@@ -25,6 +25,7 @@ import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.ServiceLoader;
+import org.jboss.arquillian.test.spi.NoMethodExecutor;
 import org.jboss.arquillian.test.spi.TestEnricher;
 import org.jboss.arquillian.test.spi.TestResult;
 import org.jboss.arquillian.test.spi.TestResult.Status;
@@ -52,6 +53,9 @@ public class LocalTestExecuter {
     private InstanceProducer<TestResult> testResult;
 
     public void execute(@Observes LocalExecutionEvent event) throws Exception {
+        if (event.getExecutor() instanceof NoMethodExecutor) {
+            return;
+        }
         TestResult result = new TestResult();
         try {
             event.getExecutor().invoke(

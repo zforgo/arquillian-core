@@ -35,7 +35,9 @@ import org.jboss.arquillian.container.spi.event.StopManualContainers;
 import org.jboss.arquillian.container.spi.event.StopSuiteContainers;
 import org.jboss.arquillian.container.spi.event.UnDeployManagedDeployments;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.container.test.impl.RunModeUtils;
 import org.jboss.arquillian.container.test.impl.client.deployment.event.GenerateDeployment;
+import org.jboss.arquillian.container.test.impl.client.deployment.event.TestModeInfoEvent;
 import org.jboss.arquillian.core.api.Event;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -112,6 +114,17 @@ public class ContainerEventController {
      */
     public void createBeforeContext(@Observes EventContext<BeforeTestLifecycleEvent> context) {
         createContext(context);
+    }
+
+    public void resolveTestModeInfo(@Observes final TestModeInfoEvent event) {
+        lookup(event.getTestMethod(), new ResultCallback() {
+            @Override
+            void call(Container container, Deployment deployment) {
+                boolean runAsClient =
+                        RunModeUtils.isRunAsClient(deployment, event.getTestClass(), event.getTestMethod());
+                event.setRunAsClient(runAsClient);
+            }
+        });
     }
 
     public void createTestContext(@Observes EventContext<Test> context) {

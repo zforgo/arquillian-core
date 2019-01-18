@@ -18,7 +18,6 @@
 package org.jboss.arquillian.junit;
 
 import org.jboss.arquillian.test.spi.TestRunnerAdaptor;
-import org.junit.runners.model.FrameworkField;
 
 /**
  * State
@@ -70,7 +69,7 @@ public class State {
 
     static {
         try {
-            Arquillian.class.getClassLoader().loadClass("org.eclipse.jdt.internal.junit.runner.RemoteTestRunner");
+			State.class.getClassLoader().loadClass("org.eclipse.jdt.internal.junit.runner.RemoteTestRunner");
             runningInEclipse = true;
         } catch (Exception e) {
             runningInEclipse = false;
@@ -87,15 +86,6 @@ public class State {
 
     static void runnerStarted() {
         lastCreatedRunner.set(lastCreatedRunner.get() + 1);
-    }
-
-    static boolean hasAnyArquillianRule(org.junit.runners.model.TestClass testClass) {
-        for (FrameworkField field : testClass.getAnnotatedFields()) {
-            if (ArquillianTestClass.class.equals(field.getType()) || ArquillianTest.class.equals(field.getType())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     static Integer runnerFinished() {

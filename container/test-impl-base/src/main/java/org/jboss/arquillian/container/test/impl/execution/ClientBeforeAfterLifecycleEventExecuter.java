@@ -19,9 +19,11 @@ package org.jboss.arquillian.container.test.impl.execution;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.client.deployment.Deployment;
 import org.jboss.arquillian.container.test.impl.RunModeUtils;
+import org.jboss.arquillian.core.api.Injector;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.test.spi.LifecycleMethodExecutor;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.AfterTestLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
@@ -52,6 +54,9 @@ public class ClientBeforeAfterLifecycleEventExecuter {
 
     @Inject
     private Instance<Container> container;
+
+    @Inject
+    private Instance<Injector> injector;
 
     public void on(@Observes(precedence = -100) BeforeClass event) throws Throwable {
         execute(event);
@@ -85,6 +90,8 @@ public class ClientBeforeAfterLifecycleEventExecuter {
     }
 
     private void execute(LifecycleEvent event) throws Throwable {
-        event.getExecutor().invoke();
+        LifecycleMethodExecutor executor = event.getExecutor();
+        injector.get().inject(executor);
+        executor.invoke();
     }
 }

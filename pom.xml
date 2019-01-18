@@ -23,8 +23,8 @@
 
   <properties>
     <!-- jboss-parent override -->
-    <maven.compiler.target>1.5</maven.compiler.target>
-    <maven.compiler.source>1.5</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
 
     <!-- External Deps -->
     <version.shrinkwrap_shrinkwrap>1.2.6</version.shrinkwrap_shrinkwrap>
@@ -58,6 +58,7 @@
     <module>container</module>
 
     <module>junit</module>
+    <module>junit5</module>
     <module>testng</module>
 
     <module>testenrichers</module>

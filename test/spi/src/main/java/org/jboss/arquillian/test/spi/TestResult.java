@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jboss.arquillian.test.spi.TestResult.Status.NOT_RUN;
+
 /**
  * A test result which may be serialized for communicate between client and
  * server
@@ -32,7 +34,7 @@ import java.util.Map;
  */
 public final class TestResult implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Status status;
+    private Status status = NOT_RUN;
     private String description = "";
     transient private Throwable throwable;
     private ExceptionProxy exceptionProxy;
@@ -108,6 +110,10 @@ public final class TestResult implements Serializable {
 
     public static TestResult failed(Throwable cause) {
         return new TestResult(Status.FAILED, cause);
+    }
+
+    public static TestResult notRun() {
+        return new TestResult(Status.NOT_RUN);
     }
 
     public static TestResult flatten(Collection<TestResult> results) {
@@ -257,6 +263,10 @@ public final class TestResult implements Serializable {
      * @author Pete Muir
      */
     public enum Status {
+        /**
+         * The test passed
+         */
+        NOT_RUN,
         /**
          * The test passed
          */
